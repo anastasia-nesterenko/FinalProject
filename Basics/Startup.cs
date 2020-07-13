@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -16,6 +11,12 @@ namespace Basics
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication("CookieAuth")
+                .AddCookie("CookieAuth", config =>
+                {
+                    config.Cookie.Name = "Grandmas.Cookie";
+                    config.LoginPath = "/Home/Authenticate";
+                });
             services.AddControllersWithViews();
         }
 
@@ -28,6 +29,12 @@ namespace Basics
             }
 
             app.UseRouting();
+
+            // Automatic authentication and the handling of remote authentication requests .
+            app.UseAuthentication();
+
+            // Check the permissions.
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
