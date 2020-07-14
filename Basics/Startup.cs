@@ -1,7 +1,10 @@
+using Basics.AuthorizationRequirements;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Security.Claims;
 
 namespace Basics
 {
@@ -17,6 +20,23 @@ namespace Basics
                     config.Cookie.Name = "Grandmas.Cookie";
                     config.LoginPath = "/Home/Authenticate";
                 });
+
+            services.AddAuthorization(config =>
+            {
+                //AuthorizationPolicyBuilder defaultAuthBuilder = new AuthorizationPolicyBuilder();
+                //config.DefaultPolicy = defaultAuthBuilder.RequireAuthenticatedUser().Build();
+
+                config.AddPolicy("Admin", policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role, "Admin"));
+
+                config.AddPolicy("Claim.DoB", policyBuilder =>
+                {
+                    //policyBuilder.RequireClaim(ClaimTypes.DateOfBirth);
+                    policyBuilder.RequireCustomClaim(ClaimTypes.DateOfBirth);
+                });
+            });
+
+            services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
+
             services.AddControllersWithViews();
         }
 

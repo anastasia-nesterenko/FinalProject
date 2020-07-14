@@ -8,7 +8,7 @@ namespace Basics.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index() 
+        public IActionResult Index()
         {
             return View();
         }
@@ -19,12 +19,26 @@ namespace Basics.Controllers
             return View();
         }
 
+        [Authorize(Policy = "Claim.DoB")]
+        public IActionResult SecretPolicy()
+        {
+            return View("Secret");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult SecretRole()
+        {
+            return View("Secret");
+        }
         public IActionResult Authenticate()
         {
             var grandmaClaims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, "Bob"),
                 new Claim(ClaimTypes.Email, "Bob@fmail.com"),
+                new Claim(ClaimTypes.DateOfBirth, "08/26/1991"),
+                // AdminTwo is not equal to Admin Role.
+                new Claim(ClaimTypes.Role, "AdminTwo"),
                 new Claim("Grandma.Says", "Very nice person."),
             };
 
