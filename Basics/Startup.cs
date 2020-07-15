@@ -1,8 +1,8 @@
 using Basics.AuthorizationRequirements;
+using Basics.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Security.Claims;
@@ -37,13 +37,14 @@ namespace Basics
             });
 
             services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
+            services.AddScoped<IAuthorizationHandler, CookieJarAuthorizationHandler>();
 
             services.AddControllersWithViews(config =>
             {
                 // Global authorization filter.
                 AuthorizationPolicyBuilder defaultAuthBuilder = new AuthorizationPolicyBuilder();
 
-                config.Filters.Add(new AuthorizeFilter(defaultAuthBuilder.RequireAuthenticatedUser().Build()));
+                //config.Filters.Add(new AuthorizeFilter(defaultAuthBuilder.RequireAuthenticatedUser().Build()));
             });
         }
 
