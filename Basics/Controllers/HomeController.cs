@@ -3,11 +3,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Basics.Controllers
 {
     public class HomeController : Controller
     {
+        //private readonly IAuthorizationService _authorizationService;
+
+        //public HomeController(IAuthorizationService authorizationService)
+        //{
+        //    _authorizationService = authorizationService;
+        //}
         public IActionResult Index()
         {
             return View();
@@ -55,6 +62,22 @@ namespace Basics.Controllers
 
             HttpContext.SignInAsync(userPrincipal);
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> DoStuff([FromServices] IAuthorizationService _authorizationService)
+
+        {
+            // This function is executed if the user is authorized.
+            var builder = new AuthorizationPolicyBuilder("Schema");
+            var customPolicy = builder.RequireClaim("Hello").Build();
+            var authResult = await _authorizationService.AuthorizeAsync(User, customPolicy);
+
+            if (authResult.Succeeded)
+            {
+                return View("Index");
+            }
+
+            return View("index");
         }
     }
 }
