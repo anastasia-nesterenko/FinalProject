@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Basics.CustomPolicyProvider;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -32,8 +33,14 @@ namespace Basics.Controllers
             return View("Secret");
         }
 
-        [Authorize(Roles = "Admin")]
-        public IActionResult SecretRole()
+        [SecurityLevel(5)]
+        public IActionResult SecretLevel()
+        {
+            return View("Secret");
+        }
+
+        [SecurityLevel(10)]
+        public IActionResult SecretHigherLevel()
         {
             return View("Secret");
         }
@@ -43,11 +50,13 @@ namespace Basics.Controllers
         {
             var grandmaClaims = new List<Claim>()
             {
+
                 new Claim(ClaimTypes.Name, "Bob"),
                 new Claim(ClaimTypes.Email, "Bob@fmail.com"),
                 new Claim(ClaimTypes.DateOfBirth, "08/26/1991"),
                 // AdminTwo is not equal to Admin Role.
                 new Claim(ClaimTypes.Role, "AdminTwo"),
+                new Claim(DynamicPolicies.SecurityLevel, "7"),
                 new Claim("Grandma.Says", "Very nice person."),
             };
 
